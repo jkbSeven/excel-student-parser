@@ -30,7 +30,7 @@ while True:
             "timeStart": timeStart,
             "timeEnd": timeEnd,
             "frequency": int(frequency),
-            "collisions": collisions.split(",").strip()
+            "collisions": list(map(str.strip, collisions.split(","))) if collisions != "" else []
         })
 
 with open("subjects.json", "w") as file:
