@@ -23,7 +23,6 @@ while True:
         timeEnd = input("Time end: ")
         frequency = input("Frequency: ")
         collisions = input("Collisions: ")
-        print(collisions.split(", "))
 
         data["subjects"][subject]["groups"].append({
             "limit": int(limit),
@@ -31,7 +30,7 @@ while True:
             "timeStart": timeStart,
             "timeEnd": timeEnd,
             "frequency": int(frequency),
-            "collisions": collisions.split(", ")
+            "collisions": collisions.split(",").strip()
         })
 
 with open("subjects.json", "w") as file:
