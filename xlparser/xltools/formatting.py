@@ -1,24 +1,20 @@
 import openpyxl as xl
 
 class Formatting:
-    def __init__(self, inputFile: str, inplace: bool):
+    def __init__(self, inputFile: str, inplace: bool = False):
         self.inputFile = inputFile
         if inplace:
             self.outputFile = inputFile
         else:
-            self.outputFile = inputFile.split('.')[0] + '_formatted.xlsx'
+            self.outputFile = inputFile.rstrip(".xlsx") + '_formatted.xlsx'
         self.wb = xl.load_workbook(self.inputFile)
         self.sheet = self.wb.active
 
     def setSheet(self, sheetName: str) -> None:
         self.sheet = self.wb[sheetName]
 
-    # (row_index, column_index)
-    def getCellByIndex(self, cellIndex: tuple[int, int]) -> xl.cell.read_only.ReadOnlyCell:
-        return self.sheet[cellIndex[0]][cellIndex[1]]
-
     @staticmethod
-    def clear(cell: xl.cell.read_only.ReadOnlyCell) -> None:
+    def clearCell(cell: xl.cell.read_only.ReadOnlyCell) -> None:
         cell.font = cell.font.DEFAULT_FONT
         cell.border = None
         cell.fill = None
@@ -26,10 +22,10 @@ class Formatting:
         cell.protection = None
         cell.alignment = None
 
-    def clearAll(self) -> None:
+    def clear(self) -> None:
         for row in self.sheet:
             for cell in row:
-                self.clear(cell)
+                self.clearCell(cell)
 
     @staticmethod
     def bold(cell: xl.cell.read_only.ReadOnlyCell) -> None:
@@ -38,6 +34,10 @@ class Formatting:
     @staticmethod
     def unbold(cell: xl.cell.read_only.ReadOnlyCell) -> None:
         cell.font.b = False
+
+    @staticmethod
+    def align(cell: xl.cell.read_only.ReadOnlyCell, alignment: str) -> None:
+        cell.alignment.horizontal = alignment # 'left', 'center', 'right'
 
     @staticmethod
     def titleValue(cell: xl.cell.read_only.ReadOnlyCell) -> None:
