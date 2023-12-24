@@ -3,24 +3,28 @@ import openpyxl as xl
 class Formatting:
     def __init__(self, inputFile: str, inplace: bool = False):
         self.inputFile = inputFile
+        self.wb = xl.load_workbook(self.inputFile)
         if inplace:
             self.outputFile = inputFile
         else:
             self.outputFile = inputFile.rstrip(".xlsx") + '_formatted.xlsx'
-        self.wb = xl.load_workbook(self.inputFile)
+
         self.sheet = self.wb.active
 
     def setSheet(self, sheetName: str) -> None:
         self.sheet = self.wb[sheetName]
 
+    def getCell(self, rowIndex: int, columnIndex: int) -> xl.cell.cell.Cell:
+        return self.sheet.cell(row=rowIndex, column=columnIndex)
+
     @staticmethod
-    def clearCell(cell: xl.cell.read_only.ReadOnlyCell) -> None:
-        cell.font = cell.font.DEFAULT_FONT
-        cell.border = None
-        cell.fill = None
-        cell.number_format = None
-        cell.protection = None
-        cell.alignment = None
+    def clearCell(cell: xl.cell.cell.Cell) -> None:
+        cell.font = xl.styles.Font()
+        cell.border = xl.styles.Border()
+        cell.fill = xl.styles.PatternFill()
+        cell.number_format = xl.styles.numbers.FORMAT_GENERAL
+        cell.protection = xl.styles.Protection()
+        cell.alignment = xl.styles.Alignment(horizontal='left')
 
     def clear(self) -> None:
         for row in self.sheet:
@@ -28,19 +32,19 @@ class Formatting:
                 self.clearCell(cell)
 
     @staticmethod
-    def bold(cell: xl.cell.read_only.ReadOnlyCell) -> None:
-        cell.font.b = True
+    def bold(cell: xl.cell.cell.Cell) -> None:
+        cell.font = cell.font.copy(bold=True)
 
     @staticmethod
-    def unbold(cell: xl.cell.read_only.ReadOnlyCell) -> None:
-        cell.font.b = False
+    def unbold(cell: xl.cell.cell.Cell) -> None:
+        cell.font = cell.font.copy(bold=False)
 
     @staticmethod
-    def align(cell: xl.cell.read_only.ReadOnlyCell, alignment: str) -> None:
-        cell.alignment.horizontal = alignment # 'left', 'center', 'right'
+    def align(cell: xl.cell.cell.Cell, alignment: str) -> None:
+        cell.alignment = cell.alignment.copy(horizontal=alignment) # alignment: 'left', 'center', 'right'
 
     @staticmethod
-    def titleValue(cell: xl.cell.read_only.ReadOnlyCell) -> None:
+    def titleValue(cell: xl.cell.cell.Cell) -> None:
         cell.value = cell.value.title()
 
     def save(self) -> None:
