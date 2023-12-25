@@ -14,17 +14,46 @@ class XlHandler:
     def setSheet(self, sheetName: str) -> None:
         self.sheet = self.wb[sheetName]
 
+    def printSheet(self, min_row: int = 0, min_col: int = 0, max_row: int = None, max_col: int = None) -> None:
+        if max_row is None:
+            max_row = self.sheet.max_row
+        if max_col is None:
+            max_col = self.sheet.max_column
+
+        for row in self.sheet.iter_rows(min_row=min_row, min_col=min_col, max_row=max_row, max_col=max_col):
+            for cell in row:
+                if cell.value is not None:
+                    print(f"{cell.value: ^20}", end="")
+                else:
+                    print(f"{'': ^20}", end="")
+            print()
+
     def getCell(self, rowIndex: int, columnIndex: int) -> xl.cell.cell.Cell:
         return self.sheet.cell(row=rowIndex, column=columnIndex)
 
-    def printSheet(self) -> None:
+    def setValue(self, cell, value: str = None) -> None:
+        if value is not None:
+            cell.value = str(value)
+        else:
+            cell.value = None
+
+    def findValue(self, value: str, count: int = 1) -> list[xl.cell.cell.Cell]:
+        if not isinstance(count, int):
+            return None
+        if count < 1:
+            return None
+
+        cells = []
+        found = 0
         for row in self.sheet.iter_rows():
             for cell in row:
-                if cell.value is not None:
-                    print(f"{cell.value: <20}", end="")
-                else:
-                    print(f"{'': <20}", end="")
-            print()
+                if cell.value == value:
+                    cells.append(cell)
+                    found += 1
+                    if found >= count:
+                        break
+                        
+        return cells
 
     def getFirstFromColumn(self, columnIndex: int) -> tuple[int, str] | None:
         for rowIndex in range(1, self.sheet.max_row + 1):
@@ -39,8 +68,8 @@ class XlHandler:
         return None
 
     @property
-    def headers(self) -> list[str]:
-        return [cell.value for cell in self.sheet[1]]
+    def headers(self) -> list[xl.cell.cell.Cell]:
+        return [cell for cell in self.sheet[1]]
 
     def split(self, columnIndex: int, pattern: str) -> None:
         firstFromColumn = self.getFirstFromColumn(columnIndex)
@@ -69,16 +98,20 @@ class XlHandler:
         self.sheet.move_range(f"{xl.utils.get_column_letter(columnIndex)}1:{xl.utils.get_column_letter(self.sheet.max_column)}{self.sheet.max_row}", cols=offset)
 
     def strip(self, cell, pattern: str = "") -> None:
-        cell.value = cell.value.strip(pattern)
+        if isinstance(cell.value, str):
+            cell.value = cell.value.strip(pattern)
 
     def lstrip(self, cell, pattern: str = " ") -> None:
-        cell.value = cell.value.lstrip(pattern)
+        if isinstance(cell.value, str):
+            cell.value = cell.value.lstrip(pattern)
 
     def rstrip(self, cell, pattern: str = " ") -> None:
-        cell.value = cell.value.rstrip(pattern)
+        if isinstance(cell.value, str):
+            cell.value = cell.value.rstrip(pattern)
 
     def replace(self, cell, old: str, new: str) -> None:
-        cell.value = cell.value.replace(old, new)
+        if isinstance(cell.value, str):
+            cell.value = cell.value.replace(old, new)
 
     def save(self):
         self.wb.save(self.outputFile)

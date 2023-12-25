@@ -17,6 +17,10 @@ class Formatting:
     def getCell(self, rowIndex: int, columnIndex: int) -> xl.cell.cell.Cell:
         return self.sheet.cell(row=rowIndex, column=columnIndex)
 
+    @property
+    def headers(self) -> list[xl.cell.cell.Cell]:
+        return [cell for cell in self.sheet[1]]
+
     @staticmethod
     def clearCell(cell: xl.cell.cell.Cell) -> None:
         cell.font = xl.styles.Font()
@@ -40,12 +44,14 @@ class Formatting:
         cell.font = cell.font.copy(bold=False)
 
     @staticmethod
-    def align(cell: xl.cell.cell.Cell, alignment: str) -> None:
-        cell.alignment = cell.alignment.copy(horizontal=alignment) # alignment: 'left', 'center', 'right'
+    def align(cell: xl.cell.cell.Cell, alignment: str = "left") -> None:
+        if alignment in ["left", "center", "right"]:
+            cell.alignment = cell.alignment.copy(horizontal=alignment)
 
     @staticmethod
     def titleValue(cell: xl.cell.cell.Cell) -> None:
-        cell.value = cell.value.title()
+        if isinstance(cell.value, str):
+            cell.value = cell.value.title()
 
     def save(self) -> None:
         self.wb.save(self.outputFile)
