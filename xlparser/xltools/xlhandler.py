@@ -51,7 +51,7 @@ class XlHandler:
                     cells.append(cell)
                     found += 1
                     if found >= count:
-                        break
+                        return cells
                         
         return cells
 
