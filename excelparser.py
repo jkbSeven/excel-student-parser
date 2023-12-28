@@ -72,7 +72,7 @@ class ESP:
                 self.xlhandler.setValue(currentCell, assignment)
 
 if __name__ == "__main__":
-    esp = ESP("/root/excel-parser/xlparser/data/Workbook2.xlsx")
+    esp = ESP("xlparser/data/WORKBOOK_NAME.xlsx")
     esp.runDefault()
     esp.formatDeafult()
 
