@@ -12,6 +12,7 @@ class ESP:
     def runDefault(self):
         self.handleNames()
         self.shortenGroups()
+        self.replaceFakeSpaces()
         self.xlhandler.save()
 
         self.processGroups()    
@@ -27,6 +28,7 @@ class ESP:
         for header in self.formatting.headers:
             self.formatting.bold(header)
             self.formatting.align(header, "center")
+            self.formatting.titleValue(header)
 
         for nameCells in self.formatting.sheet.iter_rows(min_row=2, max_col=2):
             for cell in nameCells:
@@ -55,6 +57,11 @@ class ESP:
                 self.xlhandler.replace(cell, "Grupa ", "")
                 self.xlhandler.replace(cell, "Nie chodzę", "N")
                 self.xlhandler.replace(cell, "Obojętne", "W")
+
+    def replaceFakeSpaces(self) -> None:
+        for row in self.xlhandler.sheet.iter_rows():
+            for cell in row:
+                self.xlhandler.replace(cell, u"\xa0", " ")
 
     def processGroups(self) -> list:
         headers = [header.value for header in self.xlhandler.headers[2:]]

@@ -9,21 +9,25 @@ class Student:
     def assign(self, subjects: dict, subject: str, groupsOrderList: list[str]) -> str:
         for group in groupsOrderList:
             if group == "N":
+                if group != groupsOrderList[0]:
+                    return "ASSIGNMENT ERROR"
                 return "N"
-            elif group == "W":
-                return "W"
-            else:
-                if self.collides(subjects, subject, group):
-                    continue
 
-                groupData = subjects[subject]["groups"][int(group) - 1]
-                groupLimit = groupData["limit"]
-                alreadyAssigned = groupData["assigned"]
-                if alreadyAssigned < groupLimit:
-                    groupData["assigned"] += 1
-                    self.groups.append(f"{subject}:{group}")
-                    return group
-        return "ERROR"
+            if group == "W":
+                return "W"
+
+            if self.collides(subjects, subject, group):
+                continue
+
+            groupData = subjects[subject]["groups"][int(group) - 1]
+            groupLimit = groupData["limit"]
+            alreadyAssigned = groupData["assigned"]
+            if alreadyAssigned < groupLimit:
+                groupData["assigned"] += 1
+                self.groups.append(f"{subject}:{group}")
+                return group
+
+        return "UNDEFINED"
 
     def collides(self, subjects: dict, subject: str, group: str) -> bool:
         for group in self.groups:
