@@ -9,7 +9,7 @@ class ESP:
         with open(os.path.join(os.path.dirname(self.workbookPath), "subjects.json"), "r") as file:
             self.subjects = json.load(file)
         
-    def runDefault(self):
+    def runDefault(self) -> None:
         self.handleNames()
         self.shortenGroups()
         self.replaceFakeSpaces()
@@ -22,7 +22,7 @@ class ESP:
         self.xlhandler.save()
         self.xlhandler.close()
 
-    def formatDeafult(self):
+    def formatDeafult(self) -> None:
         self.formatting = xl.Formatting(self.xlhandler.outputFile)
         self.formatting.clear()
         for header in self.formatting.headers:
@@ -63,7 +63,7 @@ class ESP:
             for cell in row:
                 self.xlhandler.replace(cell, u"\xa0", " ")
 
-    def processGroups(self) -> list:
+    def processGroups(self) -> None:
         headers = [header.value for header in self.xlhandler.headers[2:]]
         for row in self.xlhandler.sheet.iter_rows(min_row=2):
             firstName, lastName = [cell.value for cell in row[:2]]
