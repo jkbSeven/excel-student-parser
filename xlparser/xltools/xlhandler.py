@@ -37,10 +37,11 @@ class XlHandler:
         else:
             cell.value = None
 
-    def findValue(self, value: str, count: int = 1) -> list[xl.cell.cell.Cell]:
+    def findValue(self, value: str, count: int = 0) -> list[xl.cell.cell.Cell] | None:
+        # count == 0: return all cells found
         if not isinstance(count, int):
             return None
-        if count < 1:
+        if count != 0 and count < 1:
             return None
 
         cells = []
@@ -50,7 +51,7 @@ class XlHandler:
                 if cell.value == value:
                     cells.append(cell)
                     found += 1
-                    if found >= count:
+                    if count != 0 and found >= count:
                         return cells
                         
         return cells

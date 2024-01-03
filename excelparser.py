@@ -43,11 +43,10 @@ class ESP:
         self.formatting.close()
 
     def handleNames(self) -> None:
-        nameCell = self.xlhandler.findValue("Imię i nazwisko")[0]
-        nameRow = nameCell.row
+        nameCell = self.xlhandler.findValue("Imię i nazwisko", 1)[0]
         nameColumn = nameCell.column
 
-        self.xlhandler.replace(self.xlhandler.getCell(nameRow, nameColumn), "i ", "")
+        self.xlhandler.replace(nameCell, "i ", "")
         self.xlhandler.shiftColumns(nameColumn, -(nameColumn - 1))
         self.xlhandler.split(1, " ")
 
@@ -75,7 +74,6 @@ class ESP:
                 currentCell = self.xlhandler.getCell(row[0].row, index + 2)
 
                 assignment = student.assign(self.subjects, subject, groupsOrderList)
-
                 self.xlhandler.setValue(currentCell, assignment)
 
 if __name__ == "__main__":
